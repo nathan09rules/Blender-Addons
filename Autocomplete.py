@@ -53,6 +53,7 @@ class Autocomplete(bpy.types.Operator):
             return {'CANCELLED'}
 
         if event.type == 'PERIOD' and event.value == 'PRESS':
+            print("PERIOD")
             script_text = bpy.context.space_data.text.as_string()
             var_map = build_map(script_text)
 
@@ -75,29 +76,32 @@ class Autocomplete(bpy.types.Operator):
             
             try:
                 full = eval(full_path)
+                print(dir(full))
+                print("SIMLIPIED" + "-"*50)
                 print([p.identifier for p in full.bl_rna.properties if not p.is_hidden])
             except AttributeError as e:
                 print(e)
             except Exception as e:
                 print(e)
-
         return {'PASS_THROUGH'}
-
+    
+    #IDK how to execute tho 
+    
     def invoke(self, context, event):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-
 def menu_func(self, context):
-    self.layout.operator("wm.auto" , text="Autocomplete")
-    
+    self.layout.operator("wm.auto", text="Autocomplete")
+
 def register():
     bpy.utils.register_class(Autocomplete)
     bpy.types.TEXT_MT_text.append(menu_func)
+    #auto start
+    bpy.ops.wm.auto('INVOKE_DEFAULT')
 
 def unregister():
     bpy.types.TEXT_MT_text.remove(menu_func)
     bpy.utils.unregister_class(Autocomplete)
 
-if __name__ == "__main__":
-    register()
+register()
